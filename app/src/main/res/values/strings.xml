@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Color Board</string>
+    <string name="action_settings">Reset</string>
+</resources>
