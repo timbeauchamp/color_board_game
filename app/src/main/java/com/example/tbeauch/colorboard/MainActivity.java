@@ -50,13 +50,32 @@ public class MainActivity extends AppCompatActivity
 			protected String doInBackground(Void... params)
 			{
 				gh.addEntry(mNumColors,mNumRowsCols, moves,mUsedUndo,win);
-				return gh.dumpResults();
+				return gh.dumpAggregate();
 			}
 
 			@Override
 			protected void onPostExecute(String result)
 			{
 					Log.d("RESULTS", result);
+			}
+		}.execute();
+	}
+
+	private void updateAggregate()
+	{
+		final GameHistory gh = GameHistory.getInstance(getApplicationContext());
+
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... params)
+			{
+				return gh.dumpAggregate();
+			}
+
+			@Override
+			protected void onPostExecute(String result)
+			{
+				Log.d("RESULTS", result);
 			}
 		}.execute();
 
@@ -119,6 +138,7 @@ public class MainActivity extends AppCompatActivity
 		resetGame();
 	    gridView.resetGrid();
 
+	    updateAggregate();
 
 	    View pickerView = findViewById(R.id.colorPickerView);
 
@@ -383,8 +403,12 @@ public class MainActivity extends AppCompatActivity
 
 	private void showAbout()
 	{
+		final GameHistory gh = GameHistory.getInstance(getApplicationContext());
+
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle(R.string.about_color_board_title);
+
+		alert.setMessage(gh.lastAggregate);
 
 		alert.setPositiveButton(R.string.about_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton)

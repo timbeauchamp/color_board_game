@@ -12,6 +12,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import java.util.Dictionary;
 import java.util.List;
 
 /**
@@ -23,6 +24,8 @@ public class GameHistory
 	private static GameHistory instance = null;
 
 	private GameHistoryDB db;
+
+	public String lastAggregate = "n/a";
 
 	protected GameHistory(Context context)
 	{
@@ -62,13 +65,29 @@ public class GameHistory
 		sb.append( GameResults.header());
 		for (GameResults gr:results)
 		{
-			sb.append(results.toString());
+			sb.append(gr.toString());
 		}
 		return sb.toString();
 	}
+
+	public String dumpAggregate()
+	{
+		StringBuffer sb = new StringBuffer();
+		ResultDao rd = db.resultDao();
+
+		List<BreakDown> breakDowns = rd.getBreakdown();
+
+		sb.append( BreakDown.header());
+		for (BreakDown bd: breakDowns)
+		{
+			sb.append(bd.toString());
+		}
+		lastAggregate = sb.toString();
+		return lastAggregate;
+	}
 }
 
-@Database(entities = {GameResults.class}, version = 1)
+@Database(entities = {GameResults.class}, version = 1, exportSchema = false)
 abstract class GameHistoryDB extends RoomDatabase
 {
 
@@ -192,13 +211,48 @@ interface ResultDao {
 			+ "num_moves LIKE :num_moves LIMIT 1")
 	GameResults findByComplexity(String num_colors, String num_moves);
 
-//	@Query("SELECT  rowcols, num_colors, count(num_moves), min(num_moves), " +
-//			"max(num_moves), avg(num_moves) from gameresults group by rowcols")
-//	String getBreakdown();
+	@Query("SELECT  rowcols, num_colors, count(num_moves) as count, min(num_moves) as min, " +
+			"max(num_moves) as max, avg(num_moves) as avg from GameResults WHERE  win = 1 group by rowcols")
+	List<BreakDown> getBreakdown();
 
 	@Insert
 	void insertAll(GameResults... result);
 
 	@Delete
 	void delete(GameResults result);
+}
+
+class BreakDown
+{
+	int rowcols;
+	int num_colors;
+	@ColumnInfo(name="count")
+	int count;
+	@ColumnInfo(name="min")
+	int min;
+	@ColumnInfo(name="max")
+	int max;
+	@ColumnInfo(name="avg")
+	int avg;
+
+	public static String header()
+	{
+		return "rowcols\tnum_colors\tcount\tmin\tmax\tavg\n";
+	}
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append(rowcols);
+		sb.append("\t");
+		sb.append(count);
+		sb.append("\t");
+		sb.append(min);
+		sb.append("\t");
+		sb.append(max);
+		sb.append("\t");
+		sb.append(avg);
+		sb.append("\n");
+		return sb.toString();
+	}
+
 }
