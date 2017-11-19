@@ -1,17 +1,13 @@
 package com.example.tbeauch.colorboard;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-
-import java.util.Random;
 
 /**
  * TODO: document your custom view class.
@@ -26,7 +22,6 @@ public class ColorPicker extends View
 	private float pickerCellWidth;
 	private float pickerCellHeight;
 	private float pickerStartX;
-	private int numColors = 6;
 
 	public ColorPicker(Context context)
 	{
@@ -70,6 +65,8 @@ public class ColorPicker extends View
 
 		int contentWidth = getWidth() - paddingLeft - paddingRight;
 		int contentHeight = getHeight() - paddingTop - paddingBottom;
+
+		int numColors = MainActivity.mNumColors;
 
 		pickerWidth = contentWidth;
 		pickerHeight = contentHeight;

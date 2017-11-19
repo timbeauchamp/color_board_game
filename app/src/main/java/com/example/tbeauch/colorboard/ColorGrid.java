@@ -1,18 +1,14 @@
 package com.example.tbeauch.colorboard;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Switch;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
@@ -26,8 +22,6 @@ public class ColorGrid extends View
 	private float mTextWidth;
 	private float mTextHeight;
 
-	private static final int NUMCOLS = 10;
-	private static final int NUMROWS = 10;
 	private int gridWidth;
 	private int gridHeight;
 
@@ -38,8 +32,6 @@ public class ColorGrid extends View
 
 	private UndoMgr undoMgr = new UndoMgr();
 
-
-	Random rand = new Random(System.currentTimeMillis());
 
 	public ColorGrid(Context context)
 	{
@@ -69,8 +61,8 @@ public class ColorGrid extends View
 	{
 		gridWidth = this.getWidth();
 		gridHeight = this.getHeight();
-		cellHeight = gridHeight / NUMROWS;
-		cellWidth = gridWidth / NUMCOLS;
+		cellHeight = gridHeight / MainActivity.mNumRowsCols;
+		cellWidth = gridWidth / MainActivity.mNumRowsCols;
 
 		initializeCells();
 
@@ -93,14 +85,14 @@ public class ColorGrid extends View
 
 		int colorVal;
 
-		for(int row = 0; row < NUMROWS; row++)
+		for(int row = 0; row < MainActivity.mNumRowsCols; row++)
 		{
 			rowOfCells = new ArrayList<Cell>();
 			cells.add(rowOfCells);
 
-			for(int col = 0; col < NUMCOLS; col++)
+			for(int col = 0; col < MainActivity.mNumRowsCols; col++)
 			{
-				colorVal = rand.nextInt(6);
+				colorVal = MainActivity.mRand.nextInt(MainActivity.mNumColors);
 
 				cell = new Cell(colorVal);
 
@@ -126,8 +118,8 @@ public class ColorGrid extends View
 
 		gridWidth = contentWidth;
 		gridHeight = contentHeight;
-		cellHeight = gridHeight / NUMROWS;
-		cellWidth = gridWidth / NUMCOLS;
+		cellHeight = gridHeight / MainActivity.mNumRowsCols;
+		cellWidth = gridWidth / MainActivity.mNumRowsCols;
 
 		Paint cellPaint = new Paint();
 		cellPaint.setColor(Color.RED);
@@ -135,9 +127,9 @@ public class ColorGrid extends View
 		Cell cell;
 
 		// Draw the ColorGrid
-		for(int row = 0; row < NUMROWS; row++)
+		for(int row = 0; row < MainActivity.mNumRowsCols; row++)
 		{
-			for(int col = 0; col < NUMCOLS; col++)
+			for(int col = 0; col < MainActivity.mNumRowsCols; col++)
 			{
 				cell = cells.get(row).get(col) ;
 
@@ -149,43 +141,6 @@ public class ColorGrid extends View
 		}
 	}
 
-
-	private Paint getPaint(int row, int col)
-	{
-
-		int choice = rand.nextInt(6);
-		int color;
-
-		switch (choice)
-		{
-			case 0:
-				color =  Color.RED;
-				break;
-			case 1:
-				color =  Color.GREEN;
-				break;
-			case 2:
-				color =  Color.YELLOW;
-				break;
-			case 3:
-				color =  Color.BLUE;
-				break;
-			case 4:
-				color =  Color.CYAN;
-				break;
-			case 5:
-				color =  Color.MAGENTA;
-				break;
-			default:
-				color =  Color.BLACK;
-				break;
-		}
-
-		Paint paint = new Paint();
-		paint.setColor(color);
-
-		return paint;
-	}
 
 	public int executeChange(int newColor)
 	{
@@ -217,7 +172,7 @@ public class ColorGrid extends View
 		cell.visited = true;
 
 		int flagged = 0;
-		if(row < (NUMROWS - 1))
+		if(row < (MainActivity.mNumRowsCols - 1))
 		{
 			cell = cells.get(row + 1).get(col);
 			if(cell.colorVal == origColor)
@@ -235,7 +190,7 @@ public class ColorGrid extends View
 			}
 		}
 
-		if(col < (NUMCOLS - 1))
+		if(col < (MainActivity.mNumRowsCols - 1))
 		{
 			cell = cells.get(row).get(col + 1);
 			if(cell.colorVal == origColor)
@@ -305,12 +260,12 @@ public class ColorGrid extends View
 			updated++;
 		}
 
-		if(row < (NUMROWS - 1))
+		if(row < (MainActivity.mNumRowsCols - 1))
 		{
 			updated += updateAllCells(row + 1, col);
 		}
 
-		if(col < (NUMCOLS - 1))
+		if(col < (MainActivity.mNumRowsCols - 1))
 		{
 				updated += updateAllCells(row, col + 1);
 		}
@@ -323,16 +278,7 @@ public class ColorGrid extends View
 		Cell cell;
 		undoMgr.clear();
 
-		for(int row = 0; row < NUMROWS; row++)
-		{
-			for(int col = 0; col < NUMCOLS; col++)
-			{
-				colorVal = rand.nextInt(6);
-				cell = cells.get(row).get(col);
-				cell.colorVal = colorVal;
-				cell.nextColorVal = colorVal;
-			}
-		}
+		initializeCells();
 		invalidate();
 		undoMgr.push(cells);
 	}
