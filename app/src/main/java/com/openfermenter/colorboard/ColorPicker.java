@@ -1,4 +1,4 @@
-package com.example.tbeauch.colorboard;
+package com.openfermenter.colorboard;
 
 import android.content.Context;
 import android.graphics.Canvas;

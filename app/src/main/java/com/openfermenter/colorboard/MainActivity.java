@@ -1,6 +1,5 @@
-package com.example.tbeauch.colorboard;
+package com.openfermenter.colorboard;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
 	static Paint[] paints;
 
-	private int moves = 0;
+	private int mNumMoves = 0;
 
 	static public int getColorVal(int color)
 	{
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity
 		return returnVal;
 	}
 
-	private void storeResults(final boolean win)
+	private void storeResults(final int numColors, final int numRowsCols, final int nummoves, final boolean usedUndo, final boolean win)
 	{
 		final GameHistory gh = GameHistory.getInstance(getApplicationContext());
 
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			protected String doInBackground(Void... params)
 			{
-				gh.addEntry(mNumColors,mNumRowsCols, moves,mUsedUndo,win);
+				gh.addEntry(numColors,numRowsCols, nummoves, usedUndo, win);
 				return gh.dumpAggregate();
 			}
 
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 		pickerView.invalidate();
 		gridView.resetGrid();
 		mUsedUndo = false;
-		moves = 0;
+		mNumMoves = 0;
 		updateMovesText();
 	}
 
@@ -170,9 +169,9 @@ public class MainActivity extends AppCompatActivity
 			    {
 			    	mUsedUndo = true;
 				    int stackSize = gridView.Undo();
-				    moves--;
+				    mNumMoves--;
 				    updateMovesText();
-				    if (moves != (stackSize - 1))
+				    if (mNumMoves != (stackSize - 1))
 				    {
 
 					    CharSequence text = "Undo stack doesn't match move count!";
@@ -298,7 +297,7 @@ public class MainActivity extends AppCompatActivity
     private void updateMovesText()
     {
 	    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-	    toolbar.setSubtitle("Moves: " + moves + " / " + mMaxMoves);
+	    toolbar.setSubtitle("Moves: " + mNumMoves + " / " + mMaxMoves);
     }
 
 	private void updateGrid(int color)
@@ -312,16 +311,16 @@ public class MainActivity extends AppCompatActivity
 
 		if (gridView.executeChange(color) > 0)
 		{
-			moves++;
+			mNumMoves++;
 
 			if(gridView.isSolid())
 			{
-				storeResults(true);
+				storeResults(mNumColors, mNumRowsCols, mNumMoves, mUsedUndo,true);
 				showWin();
 			}
-			else if(moves >= mMaxMoves)
+			else if(mNumMoves >= mMaxMoves)
 			{
-				storeResults(false);
+				storeResults(mNumColors, mNumRowsCols, mNumMoves, mUsedUndo,false);
 				showLose();
 			}
 			updateMovesText();
@@ -332,8 +331,8 @@ public class MainActivity extends AppCompatActivity
 	private void showLose()
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Bzzzzzzz, Too many moves! \nYou Lose.");
-		moves = 0;
+		alert.setTitle("Bzzzzzzz, Too many Moves! \nYou Lose.");
+		mNumMoves = 0;
 		alert.setPositiveButton("Start Again", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton)
 			{
@@ -368,7 +367,7 @@ public class MainActivity extends AppCompatActivity
 	private void showWin()
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Congratulations, \nonly " + moves + " moves!");
+		alert.setTitle("Congratulations, \nonly " + mNumMoves + " Moves!");
 
 		alert.setPositiveButton("Start Again", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton)
@@ -397,7 +396,7 @@ public class MainActivity extends AppCompatActivity
                }
            }
        });
-		moves = 0;
+		mNumMoves = 0;
 		alert.show();
 	}
 

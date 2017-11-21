@@ -1,4 +1,4 @@
-package com.example.tbeauch.colorboard;
+package com.openfermenter.colorboard;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Stack;
 
 /**

@@ -1,4 +1,4 @@
-package com.example.tbeauch.colorboard;
+package com.openfermenter.colorboard;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Dao;
@@ -12,7 +12,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import java.util.Dictionary;
 import java.util.List;
 
 /**
@@ -117,7 +116,7 @@ class GameResults
 
 	public static String header()
 	{
-		return "gid\trowcols\tnum_colors\tused_undo\tnum_moves\twin\n";
+		return "gid\trows\tcolors\tundo?\tmoves\twin\n";
 	}
 
 	public String toString()
@@ -211,8 +210,8 @@ interface ResultDao {
 			+ "num_moves LIKE :num_moves LIMIT 1")
 	GameResults findByComplexity(String num_colors, String num_moves);
 
-	@Query("SELECT  rowcols, num_colors, count(num_moves) as count, min(num_moves) as min, " +
-			"max(num_moves) as max, avg(num_moves) as avg from GameResults WHERE  win = 1 group by rowcols")
+	@Query("SELECT  win, rowcols, num_colors, count(num_moves) as count, min(num_moves) as min, " +
+			"max(num_moves) as max, avg(num_moves) as avg from GameResults group by win, rowcols")
 	List<BreakDown> getBreakdown();
 
 	@Insert
@@ -224,6 +223,7 @@ interface ResultDao {
 
 class BreakDown
 {
+	boolean win;
 	int rowcols;
 	int num_colors;
 	@ColumnInfo(name="count")
@@ -237,12 +237,16 @@ class BreakDown
 
 	public static String header()
 	{
-		return "rowcols\tnum_colors\tcount\tmin\tmax\tavg\n";
+		return "win\trows\tcolors\tcount\tmin\tmax\tavg\n";
 	}
 	public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
+		sb.append(win);
+		sb.append("\t");
 		sb.append(rowcols);
+		sb.append("\t");
+		sb.append(num_colors);
 		sb.append("\t");
 		sb.append(count);
 		sb.append("\t");

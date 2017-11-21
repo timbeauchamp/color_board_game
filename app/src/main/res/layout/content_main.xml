@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.tbeauch.colorboard.MainActivity"
+    tools:context="com.openfermenter.colorboard.MainActivity"
     tools:showIn="@layout/activity_main"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
@@ -19,7 +19,7 @@
 
         <view
             android:id="@+id/ColorGridView"
-            class="com.example.tbeauch.colorboard.ColorGrid"
+            class="com.openfermenter.colorboard.ColorGrid"
             id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="800dp"
@@ -55,7 +55,7 @@
 
         <view
             android:id="@+id/colorPickerView"
-            class="com.example.tbeauch.colorboard.ColorPicker"
+            class="com.openfermenter.colorboard.ColorPicker"
             id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="60dp"
