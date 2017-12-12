@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
 {
-
+	private static int[] MAXMOVES = new int[] {0,1,4,6,9,10,11,12,14,20,22,23,24,25,26};
 	public static int mNumColors = 7 ;
 	public static int mMaxMoves = 22;
 	public static int mNumRowsCols = 8;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
 		if(mShouldRandomize)
 		{
 			mNumRowsCols = 5 + MainActivity.mRand.nextInt(8);
-			mNumColors = 1 + (mNumRowsCols + 1) / 2;
+			mNumColors = 5 + (mNumRowsCols) / 9;
 		}
 		else
 		{
@@ -125,7 +125,8 @@ public class MainActivity extends AppCompatActivity
 
 	private void setMaxMoves()
 	{
-		mMaxMoves = mNumColors < 6 ? mNumColors * 3 + 1 : mNumColors + 16;
+		mMaxMoves = MAXMOVES[mNumRowsCols];
+				//= mNumRowsCols < 9 ? mNumRowsCols * 2 : (mNumRowsCols + 35)/2;
 	}
 
     @Override
